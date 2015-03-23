@@ -597,9 +597,14 @@ class BaseSchema(base.SchemaABC):
         elif self.opts.additional:
             # Return declared fields + additional fields
             field_names = (self.set_class(self.declared_fields.keys()) |
-                            self.set_class(self.opts.additional))
+                           self.set_class(self.opts.additional))
         else:
             field_names = self.set_class(self.declared_fields.keys())
+
+        # If "field" option is specified, perform set intersection
+        fields = set(self.opts.fields)
+        if fields:
+            field_names = field_names & fields
 
         # If "exclude" option or param is specified, remove those fields
         excludes = set(self.opts.exclude) | set(self.exclude)
